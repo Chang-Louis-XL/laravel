@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\phone;
+use App\Models\Phone;
 use Illuminate\Http\Request;
 
 class PhoneController extends Controller
@@ -34,7 +34,7 @@ class PhoneController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(phone $phone)
+    public function show(Phone $phone)
     {
         //
     }
@@ -42,7 +42,7 @@ class PhoneController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(phone $phone)
+    public function edit(Phone $phone)
     {
         //
     }
@@ -50,7 +50,7 @@ class PhoneController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, phone $phone)
+    public function update(Request $request, Phone $phone)
     {
         //
     }
@@ -58,7 +58,7 @@ class PhoneController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(phone $phone)
+    public function destroy(Phone $phone)
     {
         //
     }

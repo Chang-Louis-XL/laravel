@@ -97,15 +97,25 @@ class StudentController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        // dd('hello StudentController update action');
+         // dd('hello StudentController update action');
         // $input = $request->all();
         $input = $request->except('_token', '_method');
         // dd($input);
 
+        // 主表 student
         $data = Student::where('id', $id)->first();
         $data->name = $input['name'];
         $data->mobile = $input['mobile'];
         $data->save();
+
+        // 子表 phone
+        $data = Phone::where('student_id', $id)->delete();
+
+        // Phone
+        $phone = new Phone();
+        $phone->student_id = $id;
+        $phone->phone = $request->phone;
+        $phone->save();
 
         return redirect()->route('students.index');
     }
