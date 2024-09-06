@@ -4,6 +4,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Student;
 use App\Models\Phone;
+use App\Models\Hobby;
+
+use App\Exports\StudentsExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class StudentController extends Controller
 {
@@ -24,7 +28,9 @@ class StudentController extends Controller
         // $data = DB::table('students')
         //     ->get();
 
-        $data = Student::with('phoneRelation')->get();
+        $data = Student::with('phoneRelation')->with('hobbiesRelation')->get();
+
+
         // dd($data[0]->phoneRelation->phone);
         // $data = Student::find(1)->phoneRelation->phone;
         // $data = Student::find(1)->phoneRelation->student_id;
@@ -36,8 +42,21 @@ class StudentController extends Controller
                 $rankText = 2;
             }
             $data[$key]['rank'] = $rankText;
+
+
+            $data[$key]['hobbies'] = "";
+            $tmpArr = [];
+            foreach ($data[$key]->hobbiesRelation as $key2 => $value2) {
+                array_push($tmpArr, $value2['hobby']);
+            }
+            // dd($tmpArr);
+            $data[$key]['hobbies'] = implode(",", $tmpArr);
+            // dd($data[$key]->hobbiesRelation);
+
         }
         // dd($data);
+
+
 
         return view('student.index', ['data' => $data]);
     }
@@ -68,6 +87,11 @@ class StudentController extends Controller
         $phone->phone = $request->phone;
         $phone->save();
 
+        $hobby = new Hobby();
+        $hobby->student_id = $student->id;
+        $hobby->hobby = $request->hobby;
+        $hobby->save();
+
         return redirect()->route('students.index');
     }
 
@@ -87,7 +111,15 @@ class StudentController extends Controller
         // dd('hello StudentController edit');
         // dd($id);
         // $data = Student::find($id);
-        $data = Student::where('id', $id)->first();
+        // $data = Student::where('id', $id)->first();
+        $data = Student::with('hobbiesRelation')->where('id', $id)->first();
+        $data['hobbies'] = "";
+        $tmpArr = [];
+        foreach ($data->hobbiesRelation as $key2 => $value2) {
+            array_push($tmpArr, $value2['hobby']);
+        }
+        // dd($tmpArr);
+        $data['hobbies'] = implode(",", $tmpArr);
         // dd($data);
         return view('student.edit', ['data' => $data]);
     }
@@ -97,7 +129,7 @@ class StudentController extends Controller
      */
     public function update(Request $request, string $id)
     {
-         // dd('hello StudentController update action');
+        // dd('hello StudentController update action');
         // $input = $request->all();
         $input = $request->except('_token', '_method');
         // dd($input);
@@ -117,6 +149,17 @@ class StudentController extends Controller
         $phone->phone = $request->phone;
         $phone->save();
 
+        // 子表 hobby 對多
+        $data = Hobby::where('student_id', $id)->delete();
+
+        // Phone
+        $hobby = new Hobby();
+        $hobby->student_id = $id;
+        $hobby->hobby = $request->hobby;
+        $hobby->save();
+
+
+
         return redirect()->route('students.index');
     }
 
@@ -128,5 +171,11 @@ class StudentController extends Controller
         $data = Student::where('id', $id)->first();
         $data->delete();
         return redirect()->route('students.index');
+    }
+
+
+    public function export()
+    {
+        return Excel::download(new StudentsExport, 'students.xlsx');
     }
 }

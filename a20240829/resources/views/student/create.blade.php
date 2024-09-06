@@ -26,8 +26,12 @@
                 <input type="mobile" class="form-control" id="mobile" placeholder="Enter mobile" name="mobile">
             </div>
             <div class="mb-3 mt-3">
-                <label for="mobile">phone:</label>
-                <input type="mobile" class="form-control" id="mobile" placeholder="Enter phone" name="phone">
+                <label for="phone">phone:</label>
+                <input type="phone" class="form-control" id="phone" placeholder="Enter phone" name="phone">
+            </div>
+            <div class="mb-3 mt-3">
+                <label for="hobby">hobby:</label>
+                <input type="hobby" class="form-control" id="hobby" placeholder="Enter hobby" name="hobby">
             </div>
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>
